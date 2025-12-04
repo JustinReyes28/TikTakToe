@@ -1,5 +1,8 @@
 # TikTakToe
 
+### Live Demo
+Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://justinreyes28.github.io/TikTakToe/)
+
 A simple implementation of the classic Tic-Tac-Toe game.
 
 ## How to Play
@@ -9,7 +12,3 @@ Players take turns marking a space in a 3x3 grid. The player who succeeds in pla
 ## Technologies Used
 
 HTML, CSS, and JavaScript
-
-## Running the Game
-
-To play, visit [Your Game Website Placeholder](http://your-game-website.com)
