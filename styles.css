@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+    background: linear-gradient(to top, #0ba360 0%, #3cba92 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -55,7 +55,7 @@ h1 {
 }
 
 .player-o {
-    color: #4fc3f7;
+    color: #f7e64f;
 }
 
 #status {
@@ -102,7 +102,7 @@ h1 {
 }
 
 .cell.o {
-    color: #4fc3f7;
+    color: #f7e64f;
 }
 
 .cell.win {
