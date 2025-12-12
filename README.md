@@ -2,6 +2,9 @@
 
 A dynamic and interactive implementation of the classic Tic-Tac-Toe game, built with vanilla HTML, CSS, and JavaScript. This project features customizable grid sizes, real-time scoring, and a responsive design for an engaging user experience.
 
+### Live Demo
+Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://justinreyes28.github.io/TikTakToe/)
+
 ## Features
 
 - **Variable Grid Sizes**: Choose from 3x3, 4x4, 5x5, or 6x6 grids to adjust the game's difficulty and win conditions.
