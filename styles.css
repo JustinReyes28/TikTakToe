@@ -203,7 +203,9 @@ h1 {
     background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
     /* Gradient background */
     color: rgb(0, 0, 0);
-    /* White text for contrast */
+    /* Black text with text shadow for WCAG AA contrast */
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+    /* Semi-opaque white text shadow for contrast */
     cursor: pointer;
     outline: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
