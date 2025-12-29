@@ -56,9 +56,28 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.innerText = `${getPlayerName(currentPlayer).toUpperCase()} TO MOVE`;
     }
 
+    function sanitizeText(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.textContent;
+    }
+
+    function validatePlayerName(name, symbol) {
+        // Limit length and allowed characters
+        const sanitized = name.trim().slice(0, 20);
+        // Allow alpha-numeric, space, hyphen, underscore
+        const validated = sanitized.replace(/[^a-zA-Z0-9 _-]/g, '');
+        return validated || `Player ${symbol}`;
+    }
+
     function getPlayerName(symbol) {
-        const name = symbol === 'X' ? playerXInput.value : playerOInput.value;
-        return name.trim() || `Player ${symbol}`;
+        try {
+            const name = symbol === 'X' ? playerXInput.value : playerOInput.value;
+            return validatePlayerName(name, symbol);
+        } catch (error) {
+            console.error("Error retrieving player name:", error);
+            return `Player ${symbol}`;
+        }
     }
 
     function checkResult() {
@@ -123,16 +142,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function addLogEntry(text) {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        entry.innerHTML = `<span style="opacity: 0.5; font-size: 0.7rem;">[${time}]</span> ${text}`;
+        try {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
 
-        if (gameLog.querySelector('.empty-log')) {
-            gameLog.innerHTML = "";
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            const timeSpan = document.createElement('span');
+            timeSpan.style.opacity = '0.5';
+            timeSpan.style.fontSize = '0.7rem';
+            timeSpan.textContent = `[${time}] `;
+
+            entry.appendChild(timeSpan);
+            entry.appendChild(document.createTextNode(text));
+
+            if (gameLog.querySelector('.empty-log')) {
+                gameLog.textContent = "";
+            }
+
+            gameLog.prepend(entry);
+        } catch (error) {
+            console.error("Error adding log entry:", error);
         }
-
-        gameLog.prepend(entry);
     }
 
     function resetGame() {
@@ -155,12 +186,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetMatch() {
-        if (confirm("This will reset all scores and match progress. Proceed?")) {
-            scores = { X: 0, O: 0, Draw: 0 };
-            matchCount = 0; // Will be incremented to 1 in resetGame
-            updateScores();
-            gameLog.innerHTML = '<p class="empty-log">Match records cleared.</p>';
-            resetGame();
+        try {
+            if (confirm("This will reset all scores and match progress. Proceed?")) {
+                scores = { X: 0, O: 0, Draw: 0 };
+                matchCount = 0; // Will be incremented to 1 in resetGame
+                updateScores();
+
+                gameLog.textContent = "";
+                const emptyMsg = document.createElement('p');
+                emptyMsg.className = 'empty-log';
+                emptyMsg.textContent = 'Match records cleared.';
+                gameLog.appendChild(emptyMsg);
+
+                resetGame();
+            }
+        } catch (error) {
+            console.error("Error resetting match:", error);
         }
     }
 
