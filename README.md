@@ -2,7 +2,10 @@
 
 A vintage newspaper-styled Tik-Tak-Toe web application crafted with strong editorial design principles. This project evokes the charm of 1950s-1970s print media, featuring halftone textures, classic typography, and a functional broadsheet-style interface.
 
-![Tik-Tak-Toe Tribune Desktop Preview](file:///C:/Users/Administrator/.gemini/antigravity/brain/c70f1467-f1bd-4e48-88f4-a92268af166e/desktop_view_initial_1767014614406.png)
+### Live Demo
+Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://justinreyes28.github.io/TikTakToe/)
+
+## Features
 
 ## ✨ Features
 
