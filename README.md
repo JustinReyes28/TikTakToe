@@ -5,7 +5,12 @@ A vintage newspaper-styled Tik-Tak-Toe web application crafted with strong edito
 ### Live Demo
 Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://justinreyes28.github.io/TikTakToe/)
 
-## Features
+<div align="center">
+  <img src="images/img1.png" width="45%" alt="Tik-Tak-Toe Screenshot 1" />
+  <img src="images/img2.png" width="45%" alt="Tik-Tak-Toe Screenshot 2" />
+</div>
+
+
 
 ## ✨ Features
 
