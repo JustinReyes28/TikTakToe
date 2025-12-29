@@ -1,208 +1,180 @@
+/* Game Logic - Newspaper Tik-Tak-Toe */
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Game state variables
-    let gridSize = 3;
-    let board = [];
+    const board = document.getElementById('board');
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.getElementById('game-status');
+    const matchNoLabel = document.getElementById('match-number');
+    const gameLog = document.getElementById('game-log');
+
+    const scoreXLabel = document.getElementById('score-x');
+    const scoreOLabel = document.getElementById('score-o');
+    const scoreDrawLabel = document.getElementById('score-draw');
+
+    const playerXInput = document.getElementById('player-x-name');
+    const playerOInput = document.getElementById('player-o-name');
+
+    const newGameBtn = document.getElementById('new-game-btn');
+    const resetMatchBtn = document.getElementById('reset-match-btn');
+    const printBtn = document.getElementById('print-btn');
+
     let currentPlayer = 'X';
+    let gameState = ["", "", "", "", "", "", "", "", ""];
     let gameActive = true;
-    let scores = { x: 0, o: 0 };
+    let matchCount = 1;
+    let scores = { X: 0, O: 0, Draw: 0 };
 
-    // DOM elements
-    const gameBoard = document.getElementById('game-board');
-    const statusDisplay = document.getElementById('status');
-    const restartButton = document.getElementById('restart-btn');
-    const scoreXDisplay = document.getElementById('score-x');
-    const scoreODisplay = document.getElementById('score-o');
-    const gridSizeSelect = document.getElementById('grid-size');
+    const winningConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+        [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
 
-    // Messages
-    const winMessage = () => `Player ${currentPlayer} wins!`;
-    const drawMessage = () => `Game ended in a draw!`;
-    const currentPlayerTurn = () => `Player ${currentPlayer}'s Turn`;
-
-    // Initialize game
-    initializeGame();
-
-    function initializeGame() {
-        gridSize = parseInt(gridSizeSelect.value);
-        createBoard();
-        restartGame();
-    }
-
-    function createBoard() {
-        // Clear existing board
-        gameBoard.innerHTML = '';
-        gameBoard.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
-
-        // Reset board array
-        board = Array(gridSize * gridSize).fill('');
-
-        // Create cells
-        for (let i = 0; i < gridSize * gridSize; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add('cell');
-            cell.setAttribute('data-cell-index', i);
-            cell.addEventListener('click', handleCellClick);
-            gameBoard.appendChild(cell);
-        }
-    }
-
-    // Handle cell click
     function handleCellClick(e) {
-        const cell = e.target;
-        const cellIndex = parseInt(cell.getAttribute('data-cell-index'));
+        const clickedCell = e.target;
+        const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
 
-        // Check if cell is already played or game is inactive
-        if (board[cellIndex] !== '' || !gameActive) {
+        if (gameState[clickedCellIndex] !== "" || !gameActive) return;
+
+        updateCell(clickedCell, clickedCellIndex);
+        checkResult();
+    }
+
+    function updateCell(cell, index) {
+        gameState[index] = currentPlayer;
+        cell.classList.add(currentPlayer.toLowerCase());
+
+        // Add random rotation to mark for hand-drawn look
+        const rotation = (Math.random() * 4 - 2).toFixed(2);
+        cell.style.setProperty('--rotation', `${rotation}deg`);
+
+        addLogEntry(`${getPlayerName(currentPlayer)} marked square ${index + 1}.`);
+    }
+
+    function changePlayer() {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        statusText.innerText = `${getPlayerName(currentPlayer).toUpperCase()} TO MOVE`;
+    }
+
+    function getPlayerName(symbol) {
+        const name = symbol === 'X' ? playerXInput.value : playerOInput.value;
+        return name.trim() || `Player ${symbol}`;
+    }
+
+    function checkResult() {
+        let roundWon = false;
+        let winSequence = null;
+
+        for (let i = 0; i < winningConditions.length; i++) {
+            const [a, b, c] = winningConditions[i];
+            if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '') continue;
+            if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+                roundWon = true;
+                winSequence = [a, b, c];
+                break;
+            }
+        }
+
+        if (roundWon) {
+            handleWin(winSequence);
             return;
         }
 
-        // Update board and UI
-        board[cellIndex] = currentPlayer;
-        cell.textContent = currentPlayer;
-        cell.classList.add(currentPlayer.toLowerCase());
-
-        // Check for win or draw
-        if (checkWin()) {
-            endGame(false);
-        } else if (isDraw()) {
-            endGame(true);
-        } else {
-            // Switch player
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            statusDisplay.textContent = currentPlayerTurn();
-        }
-    }
-
-    // Check for win
-    function checkWin() {
-        const size = gridSize;
-        const winLength = (size === 3) ? 3 : 4;
-        const cells = document.querySelectorAll('.cell');
-
-        // Helper to check a sequence of indices
-        function checkSequence(indices) {
-            const first = board[indices[0]];
-            if (first === '' || first === undefined) return false;
-
-            const isWin = indices.every(index => board[index] === first);
-            if (isWin) {
-                // Highlight winning cells
-                indices.forEach(index => {
-                    cells[index].classList.add('win');
-                });
-                return true;
-            }
-            return false;
+        let roundDraw = !gameState.includes("");
+        if (roundDraw) {
+            handleDraw();
+            return;
         }
 
-        // Iterate through all possible starting positions
-        for (let r = 0; r < size; r++) {
-            for (let c = 0; c < size; c++) {
-                // 1. Horizontal
-                if (c + winLength <= size) {
-                    let indices = [];
-                    for (let k = 0; k < winLength; k++) {
-                        indices.push(r * size + (c + k));
-                    }
-                    if (checkSequence(indices)) return true;
-                }
-
-                // 2. Vertical
-                if (r + winLength <= size) {
-                    let indices = [];
-                    for (let k = 0; k < winLength; k++) {
-                        indices.push((r + k) * size + c);
-                    }
-                    if (checkSequence(indices)) return true;
-                }
-
-                // 3. Diagonal (Top-Left to Bottom-Right)
-                if (r + winLength <= size && c + winLength <= size) {
-                    let indices = [];
-                    for (let k = 0; k < winLength; k++) {
-                        indices.push((r + k) * size + (c + k));
-                    }
-                    if (checkSequence(indices)) return true;
-                }
-
-                // 4. Diagonal (Top-Right to Bottom-Left)
-                if (r + winLength <= size && c - winLength + 1 >= 0) {
-                    let indices = [];
-                    for (let k = 0; k < winLength; k++) {
-                        indices.push((r + k) * size + (c - k));
-                    }
-                    if (checkSequence(indices)) return true;
-                }
-            }
-        }
-
-        return false;
+        changePlayer();
     }
 
-    // Check for draw
-    function isDraw() {
-        return board.every(cell => cell !== '');
-    }
-
-    // End the game
-    function endGame(draw) {
+    function handleWin(sequence) {
         gameActive = false;
+        const winnerName = getPlayerName(currentPlayer);
+        statusText.innerText = `VICTORY FOR ${winnerName.toUpperCase()}!`;
+        statusText.classList.add('winner-headline');
 
-        if (draw) {
-            statusDisplay.textContent = drawMessage();
-        } else {
-            statusDisplay.textContent = winMessage();
-            updateScores();
-        }
-    }
+        scores[currentPlayer]++;
+        updateScores();
+        addLogEntry(`--- MATCH ${matchCount} CONCLUDED ---`);
+        addLogEntry(`${winnerName} claims the field.`);
 
-    // Update scores
-    function updateScores() {
-        if (currentPlayer === 'X') {
-            scores.x++;
-            scoreXDisplay.textContent = scores.x;
-        } else {
-            scores.o++;
-            scoreODisplay.textContent = scores.o;
-        }
-    }
-
-    // Restart the game logic
-    function restartGame() {
-        board = Array(gridSize * gridSize).fill('');
-        gameActive = true;
-        currentPlayer = 'X';
-
-        statusDisplay.textContent = currentPlayerTurn();
-
-        // Clear all cells and remove visual classes
-        const cells = document.querySelectorAll('.cell');
-        cells.forEach(cell => {
-            cell.textContent = '';
-            cell.classList.remove('x', 'o', 'win');
+        // Draw winning line (visual only)
+        sequence.forEach(index => {
+            cells[index].style.backgroundColor = '#f0f0f0';
+            cells[index].style.textDecoration = 'line-through';
         });
     }
 
-    // Full Reset (re-create board if needed, but mainly for logic)
-    function handleRestart() {
-        // If grid size changed, we need to recreate the board
-        const currentSizeFromSelect = parseInt(gridSizeSelect.value);
-        if (currentSizeFromSelect !== gridSize) {
-            gridSize = currentSizeFromSelect;
-            createBoard();
-        }
-        restartGame();
+    function handleDraw() {
+        gameActive = false;
+        statusText.innerText = "A DRAW! WELL CONTESTED.";
+        scores.Draw++;
+        updateScores();
+        addLogEntry(`--- MATCH ${matchCount} CONCLUDED ---`);
+        addLogEntry(`Neither side gains the advantage.`);
     }
 
-    // Listen for grid size change to restart immediately or wait for manual restart?
-    // Let's restart immediately when size changes for better UX.
-    gridSizeSelect.addEventListener('change', () => {
-        gridSize = parseInt(gridSizeSelect.value);
-        createBoard();
-        // Reset scores or keep them? Usually new game type = new scores, but keeping them is fine too.
-        // Let's reset game state but keep scores for now, unless user reloads.
-        restartGame();
-    });
+    function updateScores() {
+        scoreXLabel.innerText = scores.X;
+        scoreOLabel.innerText = scores.O;
+        scoreDrawLabel.innerText = scores.Draw;
+    }
 
-    restartButton.addEventListener('click', handleRestart);
+    function addLogEntry(text) {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        entry.innerHTML = `<span style="opacity: 0.5; font-size: 0.7rem;">[${time}]</span> ${text}`;
+
+        if (gameLog.querySelector('.empty-log')) {
+            gameLog.innerHTML = "";
+        }
+
+        gameLog.prepend(entry);
+    }
+
+    function resetGame() {
+        currentPlayer = 'X';
+        gameState = ["", "", "", "", "", "", "", "", ""];
+        gameActive = true;
+        matchCount++;
+
+        matchNoLabel.innerText = matchCount;
+        statusText.innerText = `${getPlayerName('X').toUpperCase()} TO MOVE`;
+        statusText.classList.remove('winner-headline');
+
+        cells.forEach(cell => {
+            cell.className = 'cell';
+            cell.style.backgroundColor = '';
+            cell.style.textDecoration = '';
+        });
+
+        addLogEntry(`--- MATCH ${matchCount} COMMENCES ---`);
+    }
+
+    function resetMatch() {
+        if (confirm("This will reset all scores and match progress. Proceed?")) {
+            scores = { X: 0, O: 0, Draw: 0 };
+            matchCount = 0; // Will be incremented to 1 in resetGame
+            updateScores();
+            gameLog.innerHTML = '<p class="empty-log">Match records cleared.</p>';
+            resetGame();
+        }
+    }
+
+    // Event Listeners
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    newGameBtn.addEventListener('click', resetGame);
+    resetMatchBtn.addEventListener('click', resetMatch);
+    printBtn.addEventListener('click', () => window.print());
+
+    // Sync status if names change
+    playerXInput.addEventListener('input', () => {
+        if (currentPlayer === 'X' && gameActive) statusText.innerText = `${getPlayerName('X').toUpperCase()} TO MOVE`;
+    });
+    playerOInput.addEventListener('input', () => {
+        if (currentPlayer === 'O' && gameActive) statusText.innerText = `${getPlayerName('O').toUpperCase()} TO MOVE`;
+    });
 });
