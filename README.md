@@ -2,10 +2,15 @@
 
 A vintage newspaper-styled Tik-Tak-Toe web application crafted with strong editorial design principles. This project evokes the charm of 1950s-1970s print media, featuring halftone textures, classic typography, and a functional broadsheet-style interface.
 
+### Live Demo
+Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://justinreyes28.github.io/TikTakToe/)
+
 <div align="center">
   <img src="images/img1.png" width="45%" alt="Tik-Tak-Toe Screenshot 1" />
   <img src="images/img2.png" width="45%" alt="Tik-Tak-Toe Screenshot 2" />
 </div>
+
+
 
 ## ✨ Features
 
