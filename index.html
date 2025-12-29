@@ -1,53 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe Game</title>
+    <title>The Tik-Tak-Toe Tribune | Daily Puzzle Challenge</title>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self';">
 </head>
-<body>
-    <div class="container">
-        <h1>Tik Tak Toe</h1>
-        
-        <div class="game-info">
-            <div class="score-board">
-                <div class="player-score">
-                    <span class="player-x">Player X: <span id="score-x">0</span></span>
-                </div>
-                <div class="player-score">
-                    <span class="player-o">Player O: <span id="score-o">0</span></span>
-                </div>
-            </div>
-            
-            <div class="setting">
-                <label for="grid-size">Grid Size:</label>
-                <select id="grid-size">
-                    <option value="3" selected>3 x 3</option>
-                    <option value="4">4 x 4</option>
-                    <option value="5">5 x 5</option>
-                    <option value="6">6 x 6</option>
-                </select>
-            </div>
 
-            <div class="game-status">
-                <h2 id="status">Player X's Turn</h2>
+<body>
+    <div class="page-wrapper">
+        <header class="masthead">
+            <div class="masthead-top">
+                <div class="metadata left">Volume XII, No. 847</div>
+                <div class="metadata center">THE TIK-TAK-TOE TRIBUNE</div>
+                <div class="metadata right">Monday, December 29, 2025</div>
             </div>
-        </div>
-        
-        <div class="game-board" id="game-board">
-        </div>
-        
-        <div class="controls">
-            <button id="restart-btn">Restart Game</button>
-        </div>
+            <h1 class="main-title">DAILY PUZZLE CHALLENGE</h1>
+            <div class="masthead-bottom">
+                <div class="metadata">LATE CITY EDITION</div>
+                <div class="metadata price">5¢</div>
+            </div>
+        </header>
+
+        <main class="newspaper-layout">
+            <!-- COLUMN 1: Instructions & Match Info -->
+            <aside class="column column-left">
+                <section class="section">
+                    <h2 class="section-header">INSTRUCTIONS</h2>
+                    <p class="instructions-text">
+                        <span class="drop-cap">A</span> classic game of strategy for two players. Alternate placing your
+                        mark in the grid. The first to align three marks horizontally, vertically, or diagonally claims
+                        victory. Best of luck to both challengers.
+                    </p>
+                </section>
+                <div class="ornament">❦</div>
+                <section class="section">
+                    <h2 class="section-header">TODAY'S PUZZLE</h2>
+                    <div class="match-info">
+                        <p>Match No. <span id="match-number">1</span></p>
+                        <p>Difficulty: Regular</p>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- COLUMN 2: Game Board -->
+            <article class="column column-center">
+                <div class="game-container">
+                    <div class="status-banner">
+                        <h3 id="game-status" class="headline">X TO MOVE</h3>
+                    </div>
+
+                    <div id="board" class="game-board">
+                        <div class="cell" data-index="0"></div>
+                        <div class="cell" data-index="1"></div>
+                        <div class="cell" data-index="2"></div>
+                        <div class="cell" data-index="3"></div>
+                        <div class="cell" data-index="4"></div>
+                        <div class="cell" data-index="5"></div>
+                        <div class="cell" data-index="6"></div>
+                        <div class="cell" data-index="7"></div>
+                        <div class="cell" data-index="8"></div>
+                    </div>
+
+                    <div class="score-board">
+                        <h2 class="section-header">MATCH STATISTICS</h2>
+                        <table class="score-table">
+                            <thead>
+                                <tr>
+                                    <th>Challenger (X)</th>
+                                    <th>Draws</th>
+                                    <th>Defender (O)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="score-x">0</td>
+                                    <td id="score-draw">0</td>
+                                    <td id="score-o">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+
+            <!-- COLUMN 3: Players & History -->
+            <aside class="column column-right">
+                <section class="section players-section">
+                    <h2 class="section-header">PLAYER REGISTRY</h2>
+                    <div class="player-input">
+                        <label for="player-x-name">Challenger X:</label>
+                        <input type="text" id="player-x-name" placeholder="Name Here" value="Player X">
+                    </div>
+                    <div class="player-input">
+                        <label for="player-o-name">Defender O:</label>
+                        <input type="text" id="player-o-name" placeholder="Name Here" value="Player O">
+                    </div>
+                </section>
+
+                <div class="ornament small">❧</div>
+
+                <section class="section logs-section">
+                    <h2 class="section-header">MATCH RESULTS</h2>
+                    <div id="game-log" class="game-log">
+                        <p class="empty-log">Awaiting first move...</p>
+                    </div>
+                </section>
+
+                <section class="controls">
+                    <button id="new-game-btn" class="classic-btn">NEW GAME</button>
+                    <button id="reset-match-btn" class="classic-btn">RESET MATCH</button>
+                    <button id="print-btn" class="classic-btn secondary">PRINT EDITION</button>
+                </section>
+            </aside>
+        </main>
+
+        <footer class="page-footer">
+            <div class="footer-line"></div>
+            <p>&copy; 1957 The Tik-Tak-Toe Tribune Publishing Co. All Rights Reserved.</p>
+        </footer>
     </div>
-    
+
+    <div class="halftone-overlay"></div>
+    <div class="paper-texture"></div>
+
     <script src="script.js"></script>
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 TikTakToe. All rights reserved. Created by Justin Reyes.</p>
-        </div>
-    </footer>
 </body>
+
 </html>
