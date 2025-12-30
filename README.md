@@ -2,17 +2,17 @@
 
 A vintage newspaper-styled Tik-Tak-Toe web application crafted with strong editorial design principles. This project evokes the charm of 1950s-1970s print media, featuring halftone textures, classic typography, and a functional broadsheet-style interface.
 
-### Live Demo
+### ✦ Live Demo
 Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://justinreyes28.github.io/TikTakToe/)
 
 <div align="center">
-  <img src="images/img1.png" width="49%" alt="Tik-Tak-Toe Screenshot 1" />
-  <img src="images/img2.png" width="49%" alt="Tik-Tak-Toe Screenshot 2" />
+  <img src="images/img1.png" width="500" alt="Tik-Tak-Toe Screenshot 1" />
+  <img src="images/img2.png" width="500" alt="Tik-Tak-Toe Screenshot 2" />
 </div>
 
 
 
-## ✨ Features
+## ✦ Features
 
 - **Vintage Editorial Design**: Pure monochrome (#000000 and #FFFFFF) palette with halftone dot textures and paper overlays.
 - **Dynamic Newspaper Layout**: 3-column broadsheet structure on desktop, transitioning to a vertical stack on mobile.
@@ -22,7 +22,7 @@ Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://
 - **Match Results Log**: Timestamped record of game events styled as a "Letters to the Editor" or results section.
 - **Print Optimization**: Dedicated "Print Edition" button and CSS styles for a clean physical newspaper output.
 
-## 🛠️ Technical Stack
+## ✦ Technical Stack
 
 - **HTML5**: Semantic layout using `<header>`, `<main>`, `<article>`, and `<aside>`.
 - **Vanilla CSS3**: 
@@ -31,7 +31,7 @@ Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://
   - **Grid/Flexbox**: Modern layout techniques for responsive editorial columns.
 - **Vanilla JavaScript**: State-based game engine handling win/draw conditions and UI synchronization.
 
-## 🚀 Getting Started
+## ✦ Getting Started
 
 1. **Clone the repository**:
    ```bash
@@ -40,13 +40,10 @@ Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://
 2. **Open the game**:
    Simply open `index.html` in any modern web browser.
 
-## 🎨 Design Philosophy
+## ✦ Design Philosophy
 
 The goal was to create a digital game that feels like a physical puzzle pulled from a Sunday newspaper. Every element—from the heavy 4px grid lines to the slight rotation of the "hand-stamped" marks—is designed to maintain the illusion of ink on paper.
 
-## 📄 License
+## ✦ License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-*© 1957 The Tik-Tak-Toe Tribune Publishing Co. All Rights Reserved.*
