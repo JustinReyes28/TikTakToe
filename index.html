@@ -58,6 +58,21 @@
           <section class="section">
             <h2 class="section-header">PUZZLE SETTINGS</h2>
             <div class="settings-group">
+                <label for="game-mode-select">Game Mode:</label>
+                <select id="game-mode-select" class="classic-select">
+                  <option value="pvp">Challenger vs Defender</option>
+                  <option value="pve">Challenger vs Automaton</option>
+                </select>
+              </div>
+              <div id="bot-difficulty-container" class="settings-group" style="display: none;">
+                <label for="bot-difficulty-select">Automaton Level:</label>
+                <select id="bot-difficulty-select" class="classic-select">
+                  <option value="easy">Elementary</option>
+                  <option value="medium">Intermediate</option>
+                  <option value="hard">Grandmaster</option>
+                </select>
+              </div>
+            <div class="settings-group">
               <label for="grid-size-select">Grid Size:</label>
               <select id="grid-size-select" class="classic-select">
                 <option value="3">3×3 (Standard)</option>

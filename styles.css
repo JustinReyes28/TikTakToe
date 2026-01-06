@@ -313,11 +313,18 @@ body {
   font-family: inherit;
   font-size: 1rem;
   background: transparent;
+  margin-bottom: 5px;
   outline: none;
 }
 
+.player-input input:read-only {
+  color: var(--medium-gray);
+  border-bottom-style: dotted;
+  cursor: not-allowed;
+}
+
 .settings-group {
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .settings-group label {
