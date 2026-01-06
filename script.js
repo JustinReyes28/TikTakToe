@@ -2,10 +2,11 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const board = document.getElementById('board');
-    const cells = document.querySelectorAll('.cell');
     const statusText = document.getElementById('game-status');
     const matchNoLabel = document.getElementById('match-number');
     const gameLog = document.getElementById('game-log');
+    const winCountSpan = document.getElementById('win-count');
+    const gridSizeSelect = document.getElementById('grid-size-select');
 
     const scoreXLabel = document.getElementById('score-x');
     const scoreOLabel = document.getElementById('score-o');
@@ -19,16 +20,72 @@ document.addEventListener('DOMContentLoaded', () => {
     const printBtn = document.getElementById('print-btn');
 
     let currentPlayer = 'X';
-    let gameState = ["", "", "", "", "", "", "", "", ""];
+    let gridSize = 3;
+    let gameState = [];
     let gameActive = true;
     let matchCount = 1;
     let scores = { X: 0, O: 0, Draw: 0 };
+    let winningConditions = [];
 
-    const winningConditions = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-        [0, 4, 8], [2, 4, 6]             // Diagonals
-    ];
+    const winMap = {
+        '3': 'three',
+        '4': 'four',
+        '5': 'five',
+        '6': 'six'
+    };
+
+    function generateWinConditions(size) {
+        const conditions = [];
+        const winLength = size; // Match N in a row for NxN grid
+
+        // Rows
+        for (let i = 0; i < size; i++) {
+            const row = [];
+            for (let j = 0; j < size; j++) {
+                row.push(i * size + j);
+            }
+            conditions.push(row);
+        }
+
+        // Columns
+        for (let i = 0; i < size; i++) {
+            const col = [];
+            for (let j = 0; j < size; j++) {
+                col.push(j * size + i);
+            }
+            conditions.push(col);
+        }
+
+        // Diagonals
+        const diag1 = [];
+        const diag2 = [];
+        for (let i = 0; i < size; i++) {
+            diag1.push(i * size + i);
+            diag2.push(i * size + (size - 1 - i));
+        }
+        conditions.push(diag1);
+        conditions.push(diag2);
+
+        return conditions;
+    }
+
+    function createBoard() {
+        gridSize = parseInt(gridSizeSelect.value);
+        document.documentElement.style.setProperty('--grid-size', gridSize);
+        winCountSpan.textContent = winMap[gridSize] || gridSize;
+        
+        board.innerHTML = '';
+        gameState = Array(gridSize * gridSize).fill("");
+        winningConditions = generateWinConditions(gridSize);
+        
+        for (let i = 0; i < gridSize * gridSize; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.setAttribute('data-index', i);
+            cell.addEventListener('click', handleCellClick);
+            board.appendChild(cell);
+        }
+    }
 
     function handleCellClick(e) {
         const clickedCell = e.target;
@@ -44,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState[index] = currentPlayer;
         cell.classList.add(currentPlayer.toLowerCase());
 
-        // Add random rotation to mark for hand-drawn look
         const rotation = (Math.random() * 4 - 2).toFixed(2);
         cell.style.setProperty('--rotation', `${rotation}deg`);
 
@@ -56,24 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.innerText = `${getPlayerName(currentPlayer).toUpperCase()} TO MOVE`;
     }
 
-    function sanitizeText(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.textContent;
-    }
-
-    function validatePlayerName(name, symbol) {
-        // Limit length and allowed characters
-        const sanitized = name.trim().slice(0, 20);
-        // Allow alpha-numeric, space, hyphen, underscore
-        const validated = sanitized.replace(/[^a-zA-Z0-9 _-]/g, '');
-        return validated || `Player ${symbol}`;
-    }
-
     function getPlayerName(symbol) {
         try {
             const name = symbol === 'X' ? playerXInput.value : playerOInput.value;
-            return validatePlayerName(name, symbol);
+            // Limit length and allowed characters
+            const sanitized = name.trim().slice(0, 20);
+            const validated = sanitized.replace(/[^a-zA-Z0-9 _-]/g, '');
+            return validated || `Player ${symbol}`;
         } catch (error) {
             console.error("Error retrieving player name:", error);
             return `Player ${symbol}`;
@@ -85,11 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let winSequence = null;
 
         for (let i = 0; i < winningConditions.length; i++) {
-            const [a, b, c] = winningConditions[i];
-            if (gameState[a] === '' || gameState[b] === '' || gameState[c] === '') continue;
-            if (gameState[a] === gameState[b] && gameState[b] === gameState[c]) {
+            const condition = winningConditions[i];
+            const firstVal = gameState[condition[0]];
+            
+            if (firstVal === '') continue;
+            
+            const isWin = condition.every(index => gameState[index] === firstVal);
+            
+            if (isWin) {
                 roundWon = true;
-                winSequence = [a, b, c];
+                winSequence = condition;
                 break;
             }
         }
@@ -119,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addLogEntry(`--- MATCH ${matchCount} CONCLUDED ---`);
         addLogEntry(`${winnerName} claims the field.`);
 
-        // Draw winning line (visual only)
+        const cells = board.querySelectorAll('.cell');
         sequence.forEach(index => {
             cells[index].style.backgroundColor = '#f0f0f0';
             cells[index].style.textDecoration = 'line-through';
@@ -145,21 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const entry = document.createElement('div');
             entry.className = 'log-entry';
-
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
             const timeSpan = document.createElement('span');
             timeSpan.style.opacity = '0.5';
             timeSpan.style.fontSize = '0.7rem';
             timeSpan.textContent = `[${time}] `;
-
             entry.appendChild(timeSpan);
             entry.appendChild(document.createTextNode(text));
 
             if (gameLog.querySelector('.empty-log')) {
                 gameLog.textContent = "";
             }
-
             gameLog.prepend(entry);
         } catch (error) {
             console.error("Error adding log entry:", error);
@@ -168,19 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function resetGame() {
         currentPlayer = 'X';
-        gameState = ["", "", "", "", "", "", "", "", ""];
         gameActive = true;
         matchCount++;
 
         matchNoLabel.innerText = matchCount;
+        createBoard();
         statusText.innerText = `${getPlayerName('X').toUpperCase()} TO MOVE`;
         statusText.classList.remove('winner-headline');
-
-        cells.forEach(cell => {
-            cell.className = 'cell';
-            cell.style.backgroundColor = '';
-            cell.style.textDecoration = '';
-        });
 
         addLogEntry(`--- MATCH ${matchCount} COMMENCES ---`);
     }
@@ -189,15 +229,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (confirm("This will reset all scores and match progress. Proceed?")) {
                 scores = { X: 0, O: 0, Draw: 0 };
-                matchCount = 0; // Will be incremented to 1 in resetGame
+                matchCount = 0;
                 updateScores();
-
                 gameLog.textContent = "";
                 const emptyMsg = document.createElement('p');
                 emptyMsg.className = 'empty-log';
                 emptyMsg.textContent = 'Match records cleared.';
                 gameLog.appendChild(emptyMsg);
-
                 resetGame();
             }
         } catch (error) {
@@ -206,16 +244,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Listeners
-    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    gridSizeSelect.addEventListener('change', () => {
+        if (confirm("Changing grid size will reset the current game. Proceed?")) {
+            matchCount--; // Don't increment match count for a settings change reset
+            resetGame();
+        } else {
+            // Revert selection if canceled
+            gridSizeSelect.value = gridSize;
+        }
+    });
+
     newGameBtn.addEventListener('click', resetGame);
     resetMatchBtn.addEventListener('click', resetMatch);
     printBtn.addEventListener('click', () => window.print());
 
-    // Sync status if names change
     playerXInput.addEventListener('input', () => {
         if (currentPlayer === 'X' && gameActive) statusText.innerText = `${getPlayerName('X').toUpperCase()} TO MOVE`;
     });
     playerOInput.addEventListener('input', () => {
         if (currentPlayer === 'O' && gameActive) statusText.innerText = `${getPlayerName('O').toUpperCase()} TO MOVE`;
     });
+
+    // Initial Board Generation
+    createBoard();
 });
