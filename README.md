@@ -16,6 +16,8 @@ Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://
 
 - **Vintage Editorial Design**: Pure monochrome (#000000 and #FFFFFF) palette with halftone dot textures and paper overlays.
 - **Dynamic Newspaper Layout**: 3-column broadsheet structure on desktop, transitioning to a vertical stack on mobile.
+- **The Automaton (PvE)**: A built-in artificial opponent with three tiers of difficulty: _Elementary_, _Intermediate_, and _Grandmaster_.
+- **Customizable Grid Size**: Choose from 3×3, 4×4, 5×5, or 6×6 boards with automatic win-condition tracking.
 - **Interactive Game Board**: A "crossword-style" grid with serialized "ink-stamp" mark animations (X and O).
 - **Match Tracking**: Real-time scoreboard for "Challenger" vs "Defender" and match counting.
 - **Player Registry**: Editable player names that sync across the headline status and match logs.
@@ -25,11 +27,14 @@ Experience TikTakToe live: [https://justinreyes28.github.io/TikTakToe/](https://
 ## ✦ Technical Stack
 
 - **HTML5**: Semantic layout using `<header>`, `<main>`, `<article>`, and `<aside>`.
-- **Vanilla CSS3**: 
+- **Vanilla CSS3**:
   - **Typography**: Google Fonts (Playfair Display, Merriweather, Bebas Neue).
   - **Aesthetics**: Radial gradients for halftone effects, CSS animations for "stamping" marks.
   - **Grid/Flexbox**: Modern layout techniques for responsive editorial columns.
-- **Vanilla JavaScript**: State-based game engine handling win/draw conditions and UI synchronization.
+- **Vanilla JavaScript**:
+  - **AI Engine**: Minimax algorithm with Alpha-Beta pruning for the "Grandmaster" automaton.
+  - **State Management**: Dynamic win-condition generation for scales up to 6×6.
+  - **Game Engine**: State-based logic handling win/draw conditions and UI synchronization.
 
 ## ✦ Getting Started
 
