@@ -42,35 +42,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function generateWinConditions(size) {
         const conditions = [];
-        const winLength = size; // Match N in a row for NxN grid
+        const winLength = size === 5 ? 4 : (size === 6 ? 5 : size); // Match N in a row for NxN grid
 
         // Rows
         for (let i = 0; i < size; i++) {
-            const row = [];
-            for (let j = 0; j < size; j++) {
-                row.push(i * size + j);
+            for (let j = 0; j <= size - winLength; j++) {
+                const row = [];
+                for (let k = 0; k < winLength; k++) {
+                    row.push(i * size + j + k);
+                }
+                conditions.push(row);
             }
-            conditions.push(row);
         }
 
         // Columns
         for (let i = 0; i < size; i++) {
-            const col = [];
-            for (let j = 0; j < size; j++) {
-                col.push(j * size + i);
+            for (let j = 0; j <= size - winLength; j++) {
+                const col = [];
+                for (let k = 0; k < winLength; k++) {
+                    col.push((j + k) * size + i);
+                }
+                conditions.push(col);
             }
-            conditions.push(col);
         }
 
-        // Diagonals
-        const diag1 = [];
-        const diag2 = [];
-        for (let i = 0; i < size; i++) {
-            diag1.push(i * size + i);
-            diag2.push(i * size + (size - 1 - i));
+        // Diagonals (top-left to bottom-right)
+        for (let i = 0; i <= size - winLength; i++) {
+            for (let j = 0; j <= size - winLength; j++) {
+                const diag = [];
+                for (let k = 0; k < winLength; k++) {
+                    diag.push((i + k) * size + j + k);
+                }
+                conditions.push(diag);
+            }
         }
-        conditions.push(diag1);
-        conditions.push(diag2);
+
+        // Diagonals (top-right to bottom-left)
+        for (let i = 0; i <= size - winLength; i++) {
+            for (let j = winLength - 1; j < size; j++) {
+                const diag = [];
+                for (let k = 0; k < winLength; k++) {
+                    diag.push((i + k) * size + j - k);
+                }
+                conditions.push(diag);
+            }
+        }
 
         return conditions;
     }
